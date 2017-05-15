@@ -2,6 +2,7 @@
 import pygame
 import sys
 from bullet import Bullet
+from alien import Alien
 
 
 def fire_bullet(bullets, ai_setting, screen, ship):
@@ -52,14 +53,15 @@ def check_events(ship, ai_setting, screen, bullets):
 			
 
 
-def update_screen(ai_setting, screen, ship, bullets, alien):
+def update_screen(ai_setting, screen, ship, bullets, aliens):
 	
 	screen.fill(ai_setting.bg_color)
 	ship.blitme()
-	alien.blitme()
+
 	for bullet in bullets.sprites():
 		
 		bullet.draw_bullet()
+	aliens.draw(screen)
 	pygame.display.flip()
 
 def update_bullets(bullets):
@@ -70,3 +72,26 @@ def update_bullets(bullets):
 		if bullet.rect.bottom <= 0:
 			bullets.remove(bullet)
 		#print len(bullets)
+
+def calc_numbers(ai_setting, alien_width):
+
+	available_space_x = ai_setting.screen_width - 2 * alien_width
+	number_aliens_x = int(available_space_x / (2 * alien_width))
+	return number_aliens_x
+
+def create_alien(screen, ai_setting, aliens, alien_number):
+	alien = Alien(screen, ai_setting)
+	alien_width = alien.rect.width
+	alien.x = alien_width + 2 * alien_width * alien_number
+	alien.rect.x = alien.x
+	aliens.add(alien)
+
+def create_fleet(screen, ai_setting, aliens):
+	alien = Alien(screen, ai_setting)
+	alien_width = alien.rect.width
+	number_aliens_x = calc_numbers(ai_setting, alien_width)
+
+	# 创建第一行外形人
+	for alien_number in range(number_aliens_x):
+		# 创建一个外形人并将其加入当前行
+		create_alien(screen, ai_setting, aliens, alien_number)
