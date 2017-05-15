@@ -73,25 +73,34 @@ def update_bullets(bullets):
 			bullets.remove(bullet)
 		#print len(bullets)
 
-def calc_numbers(ai_setting, alien_width):
+def get_numbers_colunm(ai_setting, alien_width):
 
 	available_space_x = ai_setting.screen_width - 2 * alien_width
-	number_aliens_x = int(available_space_x / (2 * alien_width))
-	return number_aliens_x
+	number_columes = int(available_space_x / (2 * alien_width))
+	return number_columes
 
-def create_alien(screen, ai_setting, aliens, alien_number):
+def get_numbers_rows(ai_setting, alien_height, ship_height):
+	available_space_y = ai_setting.screen_height - 3 * alien_height - ship_height
+	number_rows = int(available_space_y / (2 * alien_height))
+	return number_rows
+
+def create_alien(screen, ai_setting, aliens, alien_number, row_number):
 	alien = Alien(screen, ai_setting)
 	alien_width = alien.rect.width
 	alien.x = alien_width + 2 * alien_width * alien_number
+	alien.rect.y = alien.rect.height + 2 * alien.rect.height * row_number  
 	alien.rect.x = alien.x
 	aliens.add(alien)
 
-def create_fleet(screen, ai_setting, aliens):
+def create_fleet(screen, ai_setting, aliens, ship):
 	alien = Alien(screen, ai_setting)
 	alien_width = alien.rect.width
-	number_aliens_x = calc_numbers(ai_setting, alien_width)
+	alien_height = alien.rect.height
+	number_columes = get_numbers_colunm(ai_setting, alien_width)
+	number_rows = get_numbers_rows(ai_setting, alien_height, ship.rect.height)
 
-	# 创建第一行外形人
-	for alien_number in range(number_aliens_x):
-		# 创建一个外形人并将其加入当前行
-		create_alien(screen, ai_setting, aliens, alien_number)
+	for row_number in range(number_rows):
+		# 创建第一行外形人
+		for alien_number in range(number_columes):
+			# 创建一个外形人并将其加入当前行
+			create_alien(screen, ai_setting, aliens, alien_number, row_number)
