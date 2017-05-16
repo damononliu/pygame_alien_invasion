@@ -14,7 +14,7 @@ def fire_bullet(bullets, ai_setting, screen, ship):
 			bullets.add(new_bullet)
 
 
-def check_keydown_events(event, ship, ai_setting, screen, bullets):
+def check_keydown_events(event, ship, ai_setting, screen, bullets, stats, aliens):
 	
 	if event.key == pygame.K_RIGHT: 
 		ship.move_right = True
@@ -29,11 +29,13 @@ def check_keydown_events(event, ship, ai_setting, screen, bullets):
 		ship.move_down = True
 	
 	elif event.key == pygame.K_SPACE:
-
 		fire_bullet(bullets, ai_setting, screen, ship)
+	
 	elif event.key == pygame.K_q:
 		sys.exit()
 
+	elif event.key == pygame.K_p and not stats.game_active:
+		start_game(stats, ship, bullets, aliens, screen, ai_setting)
 
 
 def check_keyup_events(event, ship):
@@ -59,7 +61,7 @@ def check_events(ship, ai_setting, screen, bullets, stats, play_button, aliens):
 
 
 		elif event.type == pygame.KEYDOWN:
-			check_keydown_events(event, ship, ai_setting, screen, bullets)
+			check_keydown_events(event, ship, ai_setting, screen, bullets, stats, aliens)
 
 		elif event.type == pygame.KEYUP:
 			check_keyup_events(event, ship)
@@ -68,10 +70,17 @@ def check_events(ship, ai_setting, screen, bullets, stats, play_button, aliens):
 			mouse_x, mouse_y = pygame.mouse.get_pos()
 			check_play_button(stats, play_button, mouse_x, mouse_y, ship, bullets, aliens, screen, ai_setting)
 
+
 def check_play_button(stats, play_button, mouse_x, mouse_y, ship, bullets, aliens, screen, ai_setting):
 	"""检测鼠标是否点击的是play按钮"""
 	button_clicked = play_button.rect.collidepoint(mouse_x, mouse_y)
 	if button_clicked and not stats.game_active:
+		start_game(stats, ship, bullets, aliens, screen, ai_setting)
+
+def start_game(stats, ship, bullets, aliens, screen, ai_setting):
+		# 重置游戏设置
+		ai_setting.initialize_dynamic_settings()
+
 		# 隐藏鼠标光标
 		pygame.mouse.set_visible(False)
 
@@ -124,6 +133,7 @@ def check_bullet_alien_collisions(bullets, aliens, screen, ai_setting, ship):
 
 	if len(aliens) == 0:
 		bullets.empty()
+		ai_setting.increase_speed()
 		create_fleet(screen, ai_setting, aliens, ship)
 
 
