@@ -24,5 +24,15 @@ class Alien(Sprite):
 		# 在指定位置绘制外形人的图像
 		self.screen.blit(self.image, self.rect)
 				
+	def update(self):
+		self.x += (self.ai_setting.alien_factor * self.ai_setting.fleet_direction)
+		self.rect.x = self.x
+
+	def check_edges(self):
+		self.screen_rect = self.screen.get_rect()
+		if self.rect.right >= self.screen_rect.right:
+			return True
+		elif self.rect.left <= 0:
+			return True
 
 		
